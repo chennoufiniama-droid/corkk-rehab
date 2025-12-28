@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CORK Rehab</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* Login/Signup form styling */
+.authFormContainer{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  z-index: 100;
+  display: none;
+  width: 320px;
+}
+.authFormContainer.active{ display: block; }
+.authFormContainer h2{
+  margin-top:0;
+  margin-bottom: 12px;
+  font-size: 22px;
+  text-align:center;
+  color: var(--green2);
+}
+.authFormContainer form{
+  display:flex;
+  flex-direction:column;
+  gap: 12px;
+}
+.authFormContainer input{
+  padding: 12px;
+  border-radius: 10px;
+  border:1px solid var(--border);
+  outline:none;
+  font-size: 14px;
+}
+.authFormContainer button{
+  padding: 12px;
+  border-radius: 10px;
+  border:none;
+  background: linear-gradient(135deg, var(--green), var(--green2));
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+  transition:0.2s;
+}
+.authFormContainer button:hover{
+  filter: brightness(1.05);
+  transform: translateY(-2px);
+}
+.authFormContainer .closeBtn{
+  position:absolute;
+  top:10px;
+  right:12px;
+  cursor:pointer;
+  font-weight:bold;
+  font-size:18px;
+  color: var(--red);
+}
+
+    :root{
+      --bg: #fbf7ee;
+      --card: #fffdf8;
+      --text: #1b1b1b;
+      --muted: #5c5c5c;
+      --green: #2f6b4f;
+      --green2: #3f8a66;
+      --orange: #f3a261;
+      --border: rgba(0,0,0,0.10);
+      --shadow: 0 12px 30px rgba(0,0,0,0.10);
+      --radius: 18px;
+      --blue: #4a90e2;
+      --red: #e94e77;
+    }
+
+    * { box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(900px 500px at 20% 0%, rgba(63,138,102,0.18), transparent 55%),
+                  radial-gradient(900px 500px at 80% 10%, rgba(47,107,79,0.12), transparent 55%),
+                  var(--bg);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    .container{ max-width: 1050px; margin: 0 auto; padding: 0 18px; }
+
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--border);
+      background: rgba(251,247,238,0.75);
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 14px 0;
+      gap: 12px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+
+    .logoDot{
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--green), var(--green2));
+      box-shadow: 0 6px 16px rgba(47,107,79,0.35);
+    }
+
+    nav{
+      display:flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      font-size: 14px;
+      color: rgba(0,0,0,0.75);
+    }
+    nav a{
+      padding: 8px 10px;
+      border-radius: 999px;
+    }
+    nav a:hover{
+      background: rgba(47,107,79,0.10);
+      color: rgba(0,0,0,0.95);
+    }
+
+    .hero{
+      padding: 44px 0 10px;
+    }
+
+    .heroGrid{
+      display:grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .heroCard{
+      border: 1px solid var(--border);
+      background: rgba(255,253,248,0.72);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 26px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease;
+    }
+    .heroCard:hover{ transform: translateY(-2px); }
+    .heroCard::before{
+      content:"";
+      position:absolute;
+      inset:-120px -120px auto auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, rgba(63,138,102,0.28), transparent 60%);
+      transform: rotate(12deg);
+    }
+    .heroCard::after{
+      content:"";
+      position:absolute;
+      inset:auto auto -140px -140px;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 40% 40%, rgba(47,107,79,0.22), transparent 62%);
+    }
+
+    h1{
+      margin: 0;
+      font-size: clamp(30px, 3.8vw, 46px);
+      line-height: 1.15;
+      letter-spacing: -0.6px;
+    }
+    .sub{
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 60ch;
+    }
+
+    .pillRow{ display:flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .pill{
+      font-size: 12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.55);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .pill:hover{ transform: translateY(-2px); background: linear-gradient(135deg, var(--green), var(--green2)); color:white; border:none; }
+
+    .ctaRow{ display:flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+
+    .btn{
+      border: 0;
+      padding: 12px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 14px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 8px;
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+    .btnPrimary{
+      background: linear-gradient(135deg, var(--green), var(--green2));
+      color: white;
+      box-shadow: 0 14px 25px rgba(47,107,79,0.28);
+    }
+    .btnPrimary:hover{ filter: brightness(1.02); transform: translateY(-1px); }
+    .btnGhost{
+      background: rgba(255,255,255,0.55);
+      border: 1px solid var(--border);
+    }
+    .btnGhost:hover{ background: rgba(255,255,255,0.75); }
+
+    .rightCardTitle{ font-weight: 800; margin: 0 0 10px; }
+    .list{ margin: 0; padding-left: 0; list-style: none; }
+    .list li{
+      margin: 12px 0;
+      padding: 12px;
+      border-radius: 14px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:600;
+      color:white;
+    }
+    .list li span.icon{
+      font-size: 20px;
+      display:inline-flex;
+      justify-content:center;
+      align-items:center;
+      width:32px;
+      height:32px;
+      border-radius:50%;
+      background: rgba(255,255,255,0.2);
+    }
+    .list li:nth-child(1){ background: linear-gradient(135deg, var(--green), var(--green2)); }
+    .list li:nth-child(2){ background: linear-gradient(135deg, var(--orange), var(--red)); }
+    .list li:nth-child(3){ background: linear-gradient(135deg, var(--blue), var(--green2)); }
+
+    .miniGrid{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .mini{
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.55);
+      font-size: 13px;
+      color: rgba(0,0,0,0.75);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .mini:hover{ transform: translateY(-2px); background: var(--green2); color:white; }
+
+    section{ padding: 34px 0; }
+    .sectionTitle{
+      font-size: 24px;
+      margin: 0 0 8px;
+      letter-spacing: -0.2px;
+    }
+    .sectionDesc{ margin: 0 0 18px; color: var(--muted); }
+
+    .grid3{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .card{
+      border: 1px solid var(--border);
+      background: rgba(255,253,248,0.72);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 22px rgba(0,0,0,0.07);
+      overflow: hidden;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .card:hover{
+      transform: translateY(-4px);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+    }
+    .cardBody{ padding: 16px; }
+    .cardTitle{ margin: 0 0 6px; font-weight: 800; }
+    .cardText{ margin: 0; color: rgba(0,0,0,0.72); font-size: 14px; }
+
+    .imgBox{
+      width: 100%;
+      height: 180px;
+      background: linear-gradient(135deg, rgba(47,107,79,0.18), rgba(251,247,238,0.0));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-bottom: 1px solid var(--border);
+    }
+    .imgBox img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display:block;
+    }
+    .imgHint{
+      font-size: 12px;
+      color: rgba(0,0,0,0.55);
+      padding: 0 14px;
+      text-align:center;
+    }
+
+    /* Enhanced B2B Section */
+    .darkBand{
+      border-radius: 24px;
+      padding: 32px;
+      background: linear-gradient(135deg, #3f8a66, #f3a261);
+      color: white;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    .darkBand h2{ margin:0 0 12px; font-size:28px; }
+    .darkBand p{ margin:0 0 8px; color: rgba(255,255,255,0.9); }
+    .darkBand .pill{
+      background: rgba(255,255,255,0.2);
+      color:white;
+      border:none;
+      padding: 10px 14px;
+      font-weight:600;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .darkBand .pill:hover{ background: rgba(255,255,255,0.35); transform: translateY(-2px); }
+
+    /* Contact Form */
+    #contact form{
+      max-width: 500px;
+      margin: 0 auto;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    #contact input, #contact textarea{
+      padding:14px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      font-size:16px;
+      outline:none;
+      transition:0.2s;
+    }
+    #contact input:focus, #contact textarea:focus{
+      border-color: var(--green2);
+      box-shadow:0 0 0 4px rgba(47,107,79,0.12);
+    }
+    #contact button{
+      padding:14px;
+      font-weight:700;
+      font-size:16px;
+      border-radius:12px;
+      border:none;
+      background: linear-gradient(135deg, var(--green), var(--green2));
+      color:white;
+      cursor:pointer;
+      transition:0.2s;
+    }
+    #contact button:hover{
+      filter:brightness(1.05);
+      transform: translateY(-2px);
+    }
+
+    footer{
+      padding: 26px 0 40px;
+      border-top: 1px solid var(--border);
+      color: rgba(0,0,0,0.60);
+      font-size: 14px;
+      text-align:center;
+    }
+    
+
+    @media (max-width: 900px){
+      .heroGrid{ grid-template-columns: 1fr; }
+      .grid3{ grid-template-columns: 1fr; }
+      .imgBox{ height: 220px; }
+      .darkBand{ grid-template-columns: 1fr; text-align:center; }
+      .darkBand div{ margin-bottom:16px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- LOGIN/SIGNUP FORM -->
+<div class="authFormContainer" id="authForm">
+  <span class="closeBtn" onclick="closeAuthForm()">×</span>
+  <h2 id="authTitle">Login</h2>
+  <form id="authFormInner">
+    <input type="email" placeholder="Email" required />
+    <input type="password" placeholder="Password" required />
+    <button type="submit">Submit</button>
+  </form>
+</div>
+
+  <header>
+    <div class="container">
+      <div class="topbar">
+        <div class="brand"><span class="logoDot"></span> CORK Rehab</div>
+        <nav>
+          <nav>
+  <a href="#products">Products</a>
+  <a href="#why">Why Cork</a>
+  <a href="#clinics">For Clinics</a>
+  <a href="#contact">Contact</a>
+  <a href="#" onclick="openAuthForm('login')">Login</a>
+  <a href="#" onclick="openAuthForm('signup')">Sign Up</a>
+</nav>
+
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="heroGrid">
+        <div class="heroCard">
+            <h1>Rehabilitation tools made with cork—warm, safe, and sustainable.</h1>
+          <p class="sub">
+            Designed for physiotherapy clinics and healthcare centers that want a better patient experience
+            and a lower environmental footprint.
+          </p>
+
+          <div class="pillRow">
+            <div class="pill">Non-slip feel</div>
+            <div class="pill">Warm-to-touch comfort</div>
+            <div class="pill">Clinic-ready materials</div>
+            <div class="pill">Sustainability-first</div>
+          </div>
+
+          <div class="ctaRow">
+            <a class="btn btnPrimary" href="#contact">Request a quote</a>
+            <a class="btn btnGhost" href="#products">See products</a>
+          </div>
+        </div>
+
+        <div class="heroCard">
+          <p class="rightCardTitle">What we provide (B2B)</p>
+          <ul class="list">
+            <li><span class="icon">🏥</span> Equipment with cork coating for comfort & safety</li>
+            <li><span class="icon">🛠️</span> Fully cork items where possible (tested)</li>
+            <li><span class="icon">🎓</span> Training, onboarding & after-sales support</li>
+          </ul>
+
+          <div class="miniGrid">
+            <div class="mini">Comfort-first design</div>
+            <div class="mini">Sustainable materials</div>
+            <div class="mini">Hygiene-focused</div>
+            <div class="mini">Testing roadmap</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ENHANCED B2B / CLINICS -->
+    <section id="clinics">
+      <div class="darkBand">
+        <div>
+          <h2>Built for Clinics & Rehab Centers</h2>
+          <p>Start with private clinics: faster pilots, real feedback, and co-design with physiotherapists.</p>
+        </div>
+        <div>
+          <p style="font-weight:600;">What we offer:</p>
+          <div class="pill">Pilot program (4–8 weeks)</div>
+          <div class="pill">Co-design</div>
+          <div class="pill">Training & onboarding</div>
+        </div>
+        <div>
+          <p style="font-weight:600;">Benefits:</p>
+          <div class="pill">Faster patient feedback</div>
+          <div class="pill">Sustainable & hygienic</div>
+          <div class="pill">Improved clinic image</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section id="products">
+      <h2 class="sectionTitle">Products</h2>
+      <p class="sectionDesc">
+        Rehab tools redesigned using cork (or cork coatings) for improved grip, warmth, and a premium natural feel.
+      </p>
+
+      <div class="grid3">
+        <div class="card">
+          <div class="imgBox">
+            <img src="images/crutches.png" alt="Cork Crutches">
+          </div>
+          <div class="cardBody">
+            <p class="cardTitle">Crutches</p>
+            <p class="cardText">Non-slip surface, warm touch, durable cork coating.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="imgBox">
+            <img src="images/medicine-ball.png" alt="Cork medicine ball">
+          </div>
+          <div class="cardBody">
+            <p class="cardTitle">Medicine balls</p>
+            <p class="cardText">Comfortable grip and a less “cold” material experience.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="imgBox">
+            <img src="images/dumbbell.png" alt="Cork dumbbell">
+          </div>
+          <div class="cardBody">
+            <p class="cardTitle">Dumbbells & handles</p>
+            <p class="cardText">Cork handles for better ergonomics and hygiene.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <h2 class="sectionTitle">Contact</h2>
+      <p class="sectionDesc">Get in touch for quotes, pilot programs, or questions about our cork rehab tools.</p>
+
+      <form action="https://formspree.io/f/xjknlpnw" method="POST">
+        <input name="clinic" placeholder="Clinic or company name" required />
+        <input type="email" name="email" placeholder="Email address" required />
+        <textarea name="message" rows="5" placeholder="Your message or inquiry..." required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+    </section>
+
+    <footer>
+      <div>© <span id="year"></span> CORK Rehab — Green innovation for rehab equipment.</div>
+      <div>
+        <a href="https://instagram.com/CorkRehab" target="_blank" rel="noopener">Instagram</a> |
+        <a href="https://linkedin.com/company/CorkRehab" target="_blank" rel="noopener">LinkedIn</a> |
+        <a href="mailto:CorkRehab@gmail.com">Email</a>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+  <script>
+  function openAuthForm(mode){
+    document.getElementById('authForm').classList.add('active');
+    document.getElementById('authTitle').textContent = mode === 'login' ? 'Login' : 'Sign Up';
+  }
+  function closeAuthForm(){
+    document.getElementById('authForm').classList.remove('active');
+  }
+</script>
+
+</body>
+</html>
